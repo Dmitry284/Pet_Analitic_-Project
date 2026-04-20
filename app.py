@@ -14,7 +14,7 @@ if "df" not in st.session_state:
 source = st.radio("Источник данных", ["PostgreSQL", "CSV-файл"], horizontal=True, key="source_selector")
 
 if source == "PostgreSQL":
-    st.sidebar.header("⚙️ Подключение к БД")
+    st.sidebar.header("Подключение к БД")
     conn_str = st.sidebar.text_input("PostgreSQL URL", value="postgresql://dima:****@localhost:5432/study",
                                      type="password")
     query = st.text_area("SQL-запрос", height=80, value="SELECT version();")
@@ -23,14 +23,14 @@ if source == "PostgreSQL":
             st.error("Укажите корректную строку подключения")
         else:
             try:
-                with st.spinner("Подключение и выполнение..."):
+                with st.spinner("Подключение и выполнение"):
                     st.session_state.df = execute_query(conn_str, query)
             except Exception as e:
                 st.error(f"Ошибка БД: {e}")
 else:
-    uploaded_file = st.file_uploader("Перетащите CSV или выберите файл", type=["csv"])
+    uploaded_file = st.file_uploader("Вставьте CSV файл", type=["csv"])
     if uploaded_file:
-        with st.spinner("Чтение файла..."):
+        with st.spinner("Чтение файла"):
             st.session_state.df = pd.read_csv(uploaded_file)
 
 
@@ -72,7 +72,7 @@ if df is not None and not df.empty:
         c2.metric("Столбцов", analysis["shape"][1])
 
     if metrics_cfg.get("missing"):
-        st.markdown("### Пропуски (NaN)")
+        st.markdown("Пропуски (NaN)")
         missing_df = pd.DataFrame({
             "Столбец": df.columns,
             "Пропуски": [analysis["missing"].get(c, 0) for c in df.columns],
@@ -81,7 +81,7 @@ if df is not None and not df.empty:
         st.dataframe(missing_df[missing_df["Пропуски"] > 0], use_container_width=True, hide_index=True)
 
     if metrics_cfg.get("unique"):
-        st.markdown("### Уникальные значения")
+        st.markdown("Уникальные значения")
         st.dataframe(pd.DataFrame(analysis["unique"], index=["Уникальных"]).T, use_container_width=True, height=120)
 
     if analysis.get("numeric_stats"):
